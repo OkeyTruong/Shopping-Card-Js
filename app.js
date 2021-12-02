@@ -95,6 +95,10 @@ class UI {
                 Storage.saveCart(cart); 
                 // set cart values
                 this.setCartValues(cart);
+                // display cart item
+                this.addCartItem(cartItem)
+                // show the cart
+                this.showCart();
             })
         });
     }
@@ -105,7 +109,34 @@ class UI {
             tempTotal += item.price * item.amount;
             itemsTotal += item.amount;
         })
-        console.log(cart);
+        // console.log(cart);
+        cartTotal.innerText = parseFloat(tempTotal.toFixed(2));
+        cartItems.innerText = itemsTotal;
+    }
+    addCartItem(item){
+         const div = document.createElement("div")
+        div.classList.add("cart-item")
+        div.innerHTML = `<img src="${item.image}" alt="product" />
+        <div>
+            <h4>${item.title}</h4>
+            <h5>$${item.price}</h5>
+            <span class="remove-item" data-id=${item.id}>
+                <i class="fas fa-trash"></i>
+        </div>
+        <div>
+            <i class="fa fa-chevron-up" data-id=${item.id}></i>
+            <p class="item-amount">${item.amount}</p>
+            <i class="fa fa-chevron-down" data-id=${item.id}></i>
+        </div>`
+        cartContent.appendChild(div)
+        // console.log(cartContent);
+    }
+    showCart(){
+        cartOverlay.classList.add("transparentBcg")
+        cartDOM.classList.add("showCart")
+    }
+    setupAPP(){
+
     }
 }
 // local storage
@@ -120,12 +151,17 @@ class Storage {
     static saveCart(cart) {
         localStorage.setItem('cart', JSON.stringify(cart));
     }
+    static getCart(){
+        return localStorage.getItem("cart")
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const ui = new UI();
     const products = new Products();
     
+    // setup  app
+    ui.setupAPP()
     // get all products
     products.getProducts().then(products =>{
         ui.displayProducts(products)

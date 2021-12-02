@@ -189,6 +189,9 @@ body {
 .showCart {
   transform: translateX(0);
 }
+.transparentBcg{
+  visibility: visible;
+}
 .close-cart {
   font-size: 1.7rem;
   cursor: pointer;
