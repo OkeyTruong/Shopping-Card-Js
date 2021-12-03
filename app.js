@@ -135,8 +135,45 @@ class UI {
         cartOverlay.classList.add("transparentBcg")
         cartDOM.classList.add("showCart")
     }
+    hideCart(){
+        cartOverlay.classList.remove("transparentBcg")
+        cartDOM.classList.remove("showCart")  
+    }
     setupAPP(){
-
+        cart = Storage.getCart();
+        this.setCartValues(cart);
+        this.populate(cart);
+        cartBtn.addEventListener("click", this.showCart);
+        closeCartBtn.addEventListener("click", this.hideCart);
+    }
+    populate(cart){
+        cart.forEach(item => this.addCartItem(item));
+    }
+    cartLogic(){
+        clearCartBtn.addEventListener("click", () => {
+            this.clearCart();
+        })
+    }
+    clearCart(){
+        let cartItems = cart.map(item => item.id);
+        cartItems.forEach(id => this.removeItem(id));
+        // console.log(cartContent.children);
+        while(cartContent.children.length > 0){
+            cartContent.removeChild(cartContent.children[0])
+        }
+        this.hideCart();
+    }
+    removeItem(id){
+        // console.log(id);
+        cart = cart.filter(item => item.id !== id);
+        this.setCartValues(cart);
+        Storage.saveCart(cart);
+        let button = this.getSingleButton(id);
+        button.disabled = false;
+        button.innerHTML = `<i class="fa fa-shopping-cart"></i> add to bag`;    
+    }
+    getSingleButton(id){
+        return buttonsDOM.find(button => button.dataset.id === id);
     }
 }
 // local storage
@@ -152,7 +189,7 @@ class Storage {
         localStorage.setItem('cart', JSON.stringify(cart));
     }
     static getCart(){
-        return localStorage.getItem("cart")
+        return localStorage.getItem("cart")?JSON.parse(localStorage.getItem("cart")):[]
     }
 }
 
@@ -168,5 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
         Storage.saveProducts(products)
     }).then(() => {
         ui.getBagButtons();
+        ui.cartLogic();
     });
 });
