@@ -121,7 +121,7 @@ class UI {
             <h4>${item.title}</h4>
             <h5>$${item.price}</h5>
             <span class="remove-item" data-id=${item.id}>
-                <i class="fas fa-trash"></i>
+                remove
         </div>
         <div>
             <i class="fa fa-chevron-up" data-id=${item.id}></i>
@@ -150,9 +150,48 @@ class UI {
         cart.forEach(item => this.addCartItem(item));
     }
     cartLogic(){
+        // clear cart button
         clearCartBtn.addEventListener("click", () => {
             this.clearCart();
         })
+        // cart functionality
+        cartContent.addEventListener("click", event => {
+        //   console.log(event.target);  
+            if(event.target.classList.contains("remove-item")){
+                let removeItem = event.target;
+                // console.log(removeItem);
+                let id = removeItem.dataset.id;
+                // remove cartContent
+                cartContent.removeChild(removeItem.parentElement.parentElement);
+                this.removeItem(id);
+            }else if(event.target.classList.contains("fa-chevron-up")){
+                let addAmount = event.target;
+                let id = addAmount.dataset.id;
+                let tempItem = cart.find(item => item.id === id)
+                // console.log(tempItem);
+                tempItem.amount += 1;
+                Storage.saveCart(cart);
+                this.setCartValues(cart);
+                addAmount.nextElementSibling.innerText = tempItem.amount;
+            }else if(event.target.classList.contains("fa-chevron-down")){
+                let lowAmount = event.target;
+                // console.log(lowAmount);
+                let id = lowAmount.dataset.id;
+                let tempItem = cart.find(item => item.id === id);
+                // console.log(tempItem)
+                tempItem.amount -= 1;
+                if(tempItem.amount > 0){
+                    Storage.saveCart(cart);
+                    this.setCartValues(cart);
+                    lowAmount.previousElementSibling.innerText = tempItem.amount;
+                }else{
+                    // console.log(lowAmount.parentElement.parentElement);
+                    cartContent.removeChild(lowAmount.parentElement.parentElement);
+                    this.removeItem(id)
+                }
+            }
+        })
+
     }
     clearCart(){
         let cartItems = cart.map(item => item.id);
