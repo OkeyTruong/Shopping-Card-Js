@@ -209,7 +209,7 @@ class UI {
         Storage.saveCart(cart);
         let button = this.getSingleButton(id);
         button.disabled = false;
-        button.innerHTML = `<i class="fa fa-shopping-cart"></i> add to bag`;    
+        button.innerHTML = `<i class="fa fa-shopping-cart"></i> add to cart`;    
     }
     getSingleButton(id){
         return buttonsDOM.find(button => button.dataset.id === id);
